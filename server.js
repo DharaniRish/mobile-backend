@@ -8,7 +8,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import enquiryRoutes from "./routes/enquiryRoutes.js";
 
-dotenv.config();
+dotenv.config({ path: new URL(".env", import.meta.url) });
 
 const app = express();
 const port = process.env.PORT || 5000;
