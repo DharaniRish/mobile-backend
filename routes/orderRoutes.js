@@ -1,0 +1,2 @@
+import express from "express";import{createOrder,getMyOrders,getOrderById,cancelOrder,getAllOrders,updateOrderStatus}from"../controllers/orderController.js";import{protect,adminOnly}from"../middleware/authMiddleware.js";
+const r=express.Router();r.use(protect);r.post("/",createOrder);r.get("/my",getMyOrders);r.get("/admin/all",adminOnly,getAllOrders);r.get("/:id",getOrderById);r.patch("/:id/cancel",cancelOrder);r.patch("/:id/status",adminOnly,updateOrderStatus);export default r;

@@ -1,0 +1,3 @@
+import jwt from "jsonwebtoken";import User from "../models/User.js";
+export const protect=async(req,res,next)=>{const h=req.headers.authorization;const t=h?.startsWith("Bearer ")?h.split(" ")[1]:null;if(!t)return res.status(401).json({message:"Not authorized, token missing"});try{const d=jwt.verify(t,process.env.JWT_SECRET);req.user=await User.findById(d.id).select("-password");if(!req.user)return res.status(401).json({message:"User not found"});next()}catch{return res.status(401).json({message:"Not authorized, token invalid"})}};
+export const adminOnly=(req,res,next)=>req.user?.role==="admin"?next():res.status(403).json({message:"Admin access required"});

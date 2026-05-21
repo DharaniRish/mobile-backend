@@ -1,0 +1,10 @@
+import jwt from "jsonwebtoken";import User from "../models/User.js";import Product from "../models/Product.js";import Order from "../models/Order.js";import ServiceBooking from "../models/ServiceBooking.js";
+const token=id=>jwt.sign({id},process.env.JWT_SECRET,{expiresIn:"7d"});
+const shape=u=>({id:u._id,name:u.name,email:u.email,role:u.role,phone:u.phone,address:u.address});
+export const registerUser=async(req,res)=>{const{name,email,password,phone,address}=req.body;if(!name||!email||!password)return res.status(400).json({message:"Name, email, and password are required"});if(await User.findOne({email}))return res.status(400).json({message:"Email already registered"});const u=await User.create({name,email,password,phone,address});res.status(201).json({token:token(u._id),user:shape(u)})};
+export const loginUser=async(req,res)=>{const u=await User.findOne({email:req.body.email});if(!u||!(await u.matchPassword(req.body.password)))return res.status(401).json({message:"Invalid credentials"});res.json({token:token(u._id),user:shape(u)})};
+export const getProfile=async(req,res)=>res.json(req.user);
+export const updateProfile=async(req,res)=>{const u=await User.findById(req.user._id);["name","phone","address"].forEach(k=>u[k]=req.body[k]??u[k]);if(req.body.password)u.password=req.body.password;await u.save();res.json(shape(u))};
+export const getUsers=async(_req,res)=>res.json(await User.find().select("-password").sort({createdAt:-1}));
+export const deleteUser=async(req,res)=>{const u=await User.findById(req.params.id);if(!u)return res.status(404).json({message:"User not found"});await u.deleteOne();res.json({message:"User deleted"})};
+export const getDashboardStats=async(_req,res)=>{const[a,b,c,d,r]=await Promise.all([User.countDocuments(),Product.countDocuments(),Order.countDocuments(),ServiceBooking.countDocuments(),Order.aggregate([{$match:{status:{$ne:"Cancelled"}}},{$group:{_id:null,total:{$sum:"$totalAmount"}}}])]);res.json({totalUsers:a,totalProducts:b,totalOrders:c,totalServiceBookings:d,totalRevenue:r[0]?.total||0})};

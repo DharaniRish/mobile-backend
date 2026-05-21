@@ -1,0 +1,2 @@
+import express from "express";import{registerUser,loginUser,getProfile,updateProfile,getUsers,deleteUser,getDashboardStats}from"../controllers/authController.js";import{protect,adminOnly}from"../middleware/authMiddleware.js";
+const r=express.Router();r.post("/register",registerUser);r.post("/login",loginUser);r.get("/profile",protect,getProfile);r.put("/profile",protect,updateProfile);r.get("/users",protect,adminOnly,getUsers);r.delete("/users/:id",protect,adminOnly,deleteUser);r.get("/dashboard",protect,adminOnly,getDashboardStats);export default r;

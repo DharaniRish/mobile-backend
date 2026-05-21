@@ -1,0 +1,2 @@
+import express from "express";import{createServiceBooking,getMyServiceBookings,getServiceBookingById,cancelServiceBooking,getAllServiceBookings,updateServiceStatus}from"../controllers/serviceController.js";import{protect,adminOnly}from"../middleware/authMiddleware.js";
+const r=express.Router();r.use(protect);r.post("/",createServiceBooking);r.get("/my",getMyServiceBookings);r.get("/admin/all",adminOnly,getAllServiceBookings);r.get("/:id",getServiceBookingById);r.patch("/:id/cancel",cancelServiceBooking);r.patch("/:id/status",adminOnly,updateServiceStatus);export default r;

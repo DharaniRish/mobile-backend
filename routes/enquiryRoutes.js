@@ -1,0 +1,2 @@
+import express from "express";import{createEnquiry,getEnquiries,updateEnquiryStatus,deleteEnquiry}from"../controllers/enquiryController.js";import{protect,adminOnly}from"../middleware/authMiddleware.js";
+const r=express.Router();r.post("/",createEnquiry);r.get("/",protect,adminOnly,getEnquiries);r.patch("/:id/status",protect,adminOnly,updateEnquiryStatus);r.delete("/:id",protect,adminOnly,deleteEnquiry);export default r;

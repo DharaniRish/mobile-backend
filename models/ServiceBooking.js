@@ -1,0 +1,3 @@
+import mongoose from "mongoose";
+const s=new mongoose.Schema({user:{type:mongoose.Schema.Types.ObjectId,ref:"User",required:true},customerName:{type:String,required:true},mobileNumber:{type:String,required:true},email:{type:String,required:true},deviceBrand:{type:String,required:true},modelNumber:{type:String,required:true},issueType:{type:String,required:true},issueDescription:{type:String,required:true},pickupAddress:{type:String,required:true},preferredDate:{type:Date,required:true},serviceType:{type:String,enum:["Pickup","Walk-in"],required:true},status:{type:String,enum:["Pending","Received","Checking","Repairing","Ready","Delivered","Cancelled"],default:"Pending"}},{timestamps:true});
+export default mongoose.model("ServiceBooking",s);

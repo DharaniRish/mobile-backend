@@ -1,0 +1,2 @@
+import express from "express";import{getProducts,getProductById,createProduct,updateProduct,deleteProduct}from"../controllers/productController.js";import{protect,adminOnly}from"../middleware/authMiddleware.js";
+const r=express.Router();r.get("/",getProducts);r.get("/:id",getProductById);r.post("/",protect,adminOnly,createProduct);r.put("/:id",protect,adminOnly,updateProduct);r.delete("/:id",protect,adminOnly,deleteProduct);export default r;
