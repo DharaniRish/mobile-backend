@@ -17,24 +17,29 @@ app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
 app.use(express.json());
 
 app.get("/", (_req, res) => res.send("Mobile Service & Product Sales API running"));
-app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/services", serviceRoutes);
-app.use("/api/enquiries", enquiryRoutes);
+app.get("/favicon.ico", (_req, res) => res.status(204).end());
+
+const requireDB = async (_req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ message: error.message || "Database connection failed" });
+  }
+};
+
+app.use("/api/auth", requireDB, authRoutes);
+app.use("/api/products", requireDB, productRoutes);
+app.use("/api/orders", requireDB, orderRoutes);
+app.use("/api/services", requireDB, serviceRoutes);
+app.use("/api/enquiries", requireDB, enquiryRoutes);
 
 app.use((err, _req, res, _next) => {
   res.status(500).json({ message: err.message || "Server error" });
 });
 
-const startServer = async () => {
-  try {
-    await connectDB();
-    app.listen(port, () => console.log(`Server running on port ${port}`));
-  } catch (error) {
-    console.error(error.message);
-    process.exit(1);
-  }
-};
+if (process.env.VERCEL !== "1") {
+  app.listen(port, () => console.log(`Server running on port ${port}`));
+}
 
-startServer();
+export default app;
